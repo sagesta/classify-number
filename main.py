@@ -55,7 +55,7 @@ def classify_number():
     
     # Input validation
     if number is None:
-        return jsonify({"error": "No number provided", "number": None}), 400
+        return jsonify({"error": "No number provided", "number": None}), 200
 
     try:
         # Allow negative and floating-point numbers
@@ -64,7 +64,7 @@ def classify_number():
             raise ValueError("Number out of bounds.")
     except ValueError:
         logging.error(f"Invalid input: {number}")
-        return jsonify({"error": "Invalid input", "number": number}), 400
+        return jsonify({"error": "Invalid input", "number": number}), 200
 
     # Convert to integer for classification (if needed)
     int_number = int(number)
