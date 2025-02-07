@@ -87,4 +87,4 @@ def classify_number():
 #To Run the app
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8000)
