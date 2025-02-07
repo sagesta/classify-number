@@ -55,19 +55,19 @@ def classify_number():
     
     # Input validation
     if number is None:
-        return jsonify({"error": "No number provided", "number": None}), 200
+        return jsonify({"error": "No number provided", "number": None}), 400
 
     try:
         # Allow negative and floating-point numbers
-        number = float(number)
-        if abs(number) > 10**10:
+        number_float = float(number)
+        if not (abs(number_float) <= 10**10):  # Check bounds
             raise ValueError("Number out of bounds.")
     except ValueError:
         logging.error(f"Invalid input: {number}")
-        return jsonify({"error": "Invalid input", "number": number}), 200
+        return jsonify({"error": "Invalid input", "number": number}), 400
 
     # Convert to integer for classification (if needed)
-    int_number = int(number)
+    int_number = int(number_float)
 
     # Determine properties
     properties = []
@@ -80,7 +80,7 @@ def classify_number():
     
     # Prepare response
     response = {
-        "number": number,  # Return the original number (including floating-point)
+        "number": number_float,  # Return the original number (including floating-point)
         "is_prime": is_prime(int_number),
         "is_perfect": is_perfect(int_number),
         "properties": properties,
