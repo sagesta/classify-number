@@ -53,38 +53,43 @@ def get_fun_fact(n):
 def classify_number():
     number = request.args.get('number')
     
-    # Input validation
-    if not number or not number.lstrip('-').isdigit() or abs(int(number)) > 10**10:
+    # Input validation: Allow negative and floating-point numbers
+    if number is None:
+        return jsonify({"error": "No number provided"}), 400
+
+    try:
+        number = float(number)
+        if abs(number) > 10**10:
+            raise ValueError("Number out of bounds.")
+    except ValueError:
         logging.error(f"Invalid input: {number}")
-        return jsonify({
-            "number": number if number else "null",
-            "error": True
-        }), 400
-    
-    number = int(number)
-    
+        return jsonify({"error": True}), 400
+
+    # Convert to integer for classification
+    int_number = int(number)
+
     # Determine properties
     properties = []
-    if is_armstrong(number):
+    if is_armstrong(int_number):
         properties.append("armstrong")
-    if number % 2 == 0:
+    if int_number % 2 == 0:
         properties.append("even")
     else:
         properties.append("odd")
     
     # Prepare response
     response = {
-        "number": number,
-        "is_prime": is_prime(number),
-        "is_perfect": is_perfect(number),
+        "number": int_number,
+        "is_prime": is_prime(int_number),
+        "is_perfect": is_perfect(int_number),
         "properties": properties,
-        "digit_sum": digit_sum(number),
-        "fun_fact": get_fun_fact(number)
+        "digit_sum": digit_sum(int_number),
+        "fun_fact": get_fun_fact(int_number)
     }
     
     return jsonify(response), 200
 
-#To Run the app
+# To Run the app
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     app.run(debug=True)
