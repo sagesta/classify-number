@@ -36,7 +36,7 @@ def is_armstrong(n):
     return n == sum(d ** length for d in digits)
 
 def digit_sum(n):
-    return sum(int(d) for d in str(n))
+    return sum(int(d) for d in str(abs(n)))  # Handle negative numbers
 
 def get_fun_fact(n):
     url = f"http://numbersapi.com/{n}/math"
@@ -53,19 +53,20 @@ def get_fun_fact(n):
 def classify_number():
     number = request.args.get('number')
     
-    # Input validation: Allow negative and floating-point numbers
+    # Input validation
     if number is None:
-        return jsonify({"error": "No number provided"}), 400
+        return jsonify({"error": "No number provided", "number": None}), 400
 
     try:
+        # Allow negative and floating-point numbers
         number = float(number)
         if abs(number) > 10**10:
             raise ValueError("Number out of bounds.")
     except ValueError:
         logging.error(f"Invalid input: {number}")
-        return jsonify({"error": True}), 400
+        return jsonify({"error": "Invalid input", "number": number}), 400
 
-    # Convert to integer for classification
+    # Convert to integer for classification (if needed)
     int_number = int(number)
 
     # Determine properties
@@ -79,7 +80,7 @@ def classify_number():
     
     # Prepare response
     response = {
-        "number": int_number,
+        "number": number,  # Return the original number (including floating-point)
         "is_prime": is_prime(int_number),
         "is_perfect": is_perfect(int_number),
         "properties": properties,
